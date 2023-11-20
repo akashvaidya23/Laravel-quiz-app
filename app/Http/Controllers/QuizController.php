@@ -6,8 +6,10 @@ use App\Models\quiz;
 use App\Models\sector;
 use App\Models\Question;
 use App\Models\User_answer;
+use App\Models\Quiz_attempt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 
 class QuizController extends Controller
 {
@@ -97,18 +99,44 @@ class QuizController extends Controller
         return view("quiz",compact("questions"));
     }
 
-    public function endQuiz($points)
+    public function endQuiz()
     {
         $sector_id = Session::get("sector_id");
         $user_name = Session::get("user_name");
-        $questions_count = Question::where("sectors_id",$sector_id)->count();
-        return view("result",compact("points","questions_count","user_name"));
+        $user_id = Session::get("user_id");
+        $questions_count = Question::where("sectors_id",$sector_id)
+            ->count();
+        $points = User_answer::where("user_id",$user_id)
+            ->where("is_correct",1)
+            ->count();
+        
+        $unique_string = $user_name . $user_id . $points;
+        $voucher_id = Hash::make($unique_string);
+        $quiz_attempt = Session::get("quiz_attempt");
+
+        Quiz_attempt::find($quiz_attempt)->update([
+            "voucher_code" => $voucher_id
+        ]);
+
+        if($points>0 && $points<6){
+            $voucher_amount = 1000;
+        } else if($points>5 && $points<11){
+            $voucher_amount = 2500;
+        } else{
+            $voucher_amount = 5000;
+        }
+
+        return view("result",compact("points","questions_count","user_name","voucher_amount","voucher_id"));
     }
 
     public function addScore(Request $request)
     {
+        // $unique_string = $user_name . $user_id . $points;
+        // $voucher_id = Hash::make($unique_string);
+        $quiz_attempt = Session::get("quiz_attempt");
         User_answer::create([
             "user_id" => $request->user_id,
+            "quiz_attempt_id" => $quiz_attempt,
             "question_id" => $request->question_id,
             "answer_id" => $request->answer_id,
             "is_correct" => $request->is_correct,

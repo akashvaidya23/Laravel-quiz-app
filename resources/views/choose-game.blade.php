@@ -58,7 +58,10 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <a href="/details-form">
+                        @php
+                            $sector_id = rand(1,4);
+                        @endphp
+                        <a href="/details-form/{{$sector_id}}">
                             <div class="infoBox mb-4">
                                 <div class="infoContent">
                                     <div class="d-flex align-items-center mb-3">

@@ -54,13 +54,13 @@
                     </div>
                 </div>
                 <p class="voucherTxt">You have won discount voucher of </br><span class="fw-normal">₹</span><span>
-                        2000/-</span></p>
+                        {{ number_format($voucher_amount) }}/-</span></p>
             </div>
 
             <div class="container pt-4 pb-5 text-center">
                 <p>Now that you've won, reach out to your nearest advisor to claim your rewards</p>
                 <div class="voucherCode mb-4">
-                    GDSDSHJ2D
+                    {{ $voucher_id }}
                 </div>
                 <a href="#">
                     <button class="blueBtn w-100 mb-3">Claim</button>

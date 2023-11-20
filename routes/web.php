@@ -22,7 +22,7 @@ Route::get("/select-sector",[App\Http\Controllers\QuizController::class,"select_
 Route::get("/details-form/{id}",[App\Http\Controllers\QuizController::class,"details_form"]);
 Route::get("/choose-game",[App\Http\Controllers\QuizController::class,"choose_game"]);
 Route::get("/start-quiz/{id}",[App\Http\Controllers\QuizController::class,"start_quiz"]);
-Route::get("/end-Quiz/{points}",[App\Http\Controllers\QuizController::class,"endQuiz"]);
+Route::get("/end-Quiz",[App\Http\Controllers\QuizController::class,"endQuiz"]);
 Route::post("/add/Score",[App\Http\Controllers\QuizController::class,"addScore"]);
 
 Route::get('/user', [UserController::class, 'index']);

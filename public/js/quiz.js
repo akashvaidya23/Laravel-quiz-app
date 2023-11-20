@@ -122,7 +122,7 @@ function next() {
             data: data,
             success: function (response) {},
         });
-        location.href = `/end-Quiz/${points}`;
+        location.href = `/end-Quiz`;
     } else if (question_count == hidden_questions.length - 2) {
         // alert("last_question 2");
         let nextBtn = document.getElementById("btn-next");

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Quiz_attempt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
@@ -41,8 +42,18 @@ class UserController extends Controller
                     'whatsApp_alert'=>$request->whatsApp,
                     'password'=>Hash::make($request->email)
                 ]);
+                
                 Session::put("user_name",$new_user->name);
                 Session::put("user_id",$new_user->id);
+                $sector_id = Session::get("sector_id");
+                
+                $quiz_attempt = Quiz_attempt::create([
+                    "user_id" => $new_user->id,
+                    "sector_id" => $sector_id
+                ]);
+
+                Session::put("quiz_attempt",$quiz_attempt->id);
+
                 return response()->json(["user" => $user, "message" => "User created successfully.", "success" => true], 200);
             } else {
                 $user_id = $user->get()[0]->id;
@@ -53,8 +64,16 @@ class UserController extends Controller
                     'whatsApp_alert'=>$request->whatsApp,
                     'password'=>Hash::make($request->email)
                 ]);
+
                 Session::put("user_name",$user->get()[0]->name);
                 Session::put("user_id",$user->get()[0]->id);
+                $sector_id = Session::get("sector_id");
+
+                $quiz_attempt = Quiz_attempt::create([
+                    "user_id" => $user->get()[0]->id,
+                    "sector_id" => $sector_id
+                ]);
+                Session::put("quiz_attempt",$quiz_attempt->id);
                 return response()->json(["user" => $user, "message" => "User updated successfully.", "success" => true], 200);
             }
         } catch(Exception $e){
