@@ -1,143 +1,32 @@
-
-let questions = [
-    {
-        id: 1,
-        question: "What is the Full Form Of RAM?",
-        answer: "Random Access Memory",
-        options: [
-            "Run Accept Memory",
-            "Random All Memory",
-            "Random Access Memory",
-            "None of these"
-        ]
-    },
-    {
-        id: 2,
-        question: "What is the Full-Form of CPU?",
-        answer: "Central Processing Unit",
-        options: [
-            "Central Program Unit",
-            "Central Processing Unit",
-            "Central Preload Unit",
-            "None of these"
-        ]
-    },
-    {
-        id: 3,
-        question: "What is the Full-Form of E-mail",
-        answer: "Electronic Mail",
-        options: [
-            "Electronic Mail",
-            "Electric Mail",
-            "Engine Mail",
-            "None of these"
-        ]
-    },
-    {
-        id: 4,
-        question: "'DB' in computer means?",
-        answer: "DataBase",
-        options: [
-            "Double Byte",
-            "Data Block",
-            "DataBase",
-            "None of these"
-        ]
-    },
-    {
-        id: 5,
-        question: "What is FMD?",
-        answer: "Fluorescent Multi-Layer Disc",
-        options: [
-            "Fluorescent Multi-Layer Disc",
-            "Flash Media Driver",
-            "Fast-Ethernet Measuring Device",
-            "None of these"
-        ]
-    },
-    {
-        id: 6,
-        question: "How many bits is a byte?",
-        answer: "8",
-        options: [
-            "32",
-            "16",
-            "8",
-            "64"
-        ]
-    },
-    {
-        id: 7,
-        question: "A JPG stands for:",
-        answer: "A format for an image file",
-        options: [
-            "A format for an image file",
-            "A Jumper Programmed Graphic",
-            "A type of hard disk",
-            "A unit of measure for memory"
-        ]
-    },
-    {
-        id: 8,
-        question: "Which was an early mainframe computer?",
-        answer: "ENIAC",
-        options: [
-            "ENIAC",
-            "EDVAC",
-            "UNIC",
-            "ABACUS"
-        ]
-    },
-    {
-        id: 9,
-        question: "Main circuit board in a computer is:",
-        answer: "Mother board",
-        options: [
-            "Harddisk",
-            "Mother board",
-            "Microprocessor",
-            "None of these"
-        ]
-    },
-    {
-        id: 10,
-        question: "ISP stands for:",
-        answer: "Internet Service Provider",
-        options: [
-            "Internet Survey Period",
-            "Integreted Service Provider",
-            "Internet Security Protocol",
-            "Internet Service Provider"
-        ]
-    },
-];
+let string_questions = document.getElementById("hidden_questions").value.trim();
+let hidden_questions = JSON.parse(string_questions);
+let user_id = document.getElementById("user_id").value;
 
 let question_count = 0;
 let points = 0;
-let total_questions = questions.length;
+let total_questions = hidden_questions.length;
 let timerInt;
 
 window.onload = function () {
     show(question_count);
     createSteps(total_questions);
-    document.getElementById('score').innerHTML = points;
-
+    document.getElementById("score").innerHTML = points;
 };
 
 function createSteps(steps) {
-    let stepList = document.getElementById('stepList')
+    let stepList = document.getElementById("stepList");
     for (let i = 0; i < steps; i++) {
         const node = document.createElement("span");
         stepList.appendChild(node);
     }
-    document.getElementById('totalQs').innerHTML = steps;
+    document.getElementById("totalQs").innerHTML = steps;
 }
 
 function timer() {
     var sec = 15;
     timerInt = setInterval(function () {
         // console.log('timer called')
-        document.getElementById('timer').innerHTML = '0:' + sec;
+        document.getElementById("timer").innerHTML = "0:" + sec;
         sec--;
         if (sec < 0) {
             clearInterval(timerInt);
@@ -147,19 +36,21 @@ function timer() {
 }
 
 function show(count) {
-    document.getElementById('attemptedQs').innerHTML = question_count + 1;
+    document.getElementById("attemptedQs").innerHTML = question_count + 1;
     // setTimer
     timer();
 
     let question = document.getElementById("questions");
-    let [first, second, third, fourth] = questions[count].options;
+    let [first, second, third, fourth] = hidden_questions[count].options;
 
-    question.innerHTML = `<h6 class='mt-2'>Q${count + 1}.  ${questions[count].question}</h6>
+    question.innerHTML = `<h6 class='mt-2'>Q${count + 1}.  ${
+        hidden_questions[count].question
+    }</h6>
       <ul class="option_group">
-      <li class="option">A. ${first}</li>
-      <li class="option">B. ${second}</li>
-      <li class="option">C. ${third}</li>
-      <li class="option">D. ${fourth}</li>
+      <li class="option" data-optionid=${first.id}>${first.option}</li>
+      <li class="option" data-optionid=${second.id}>${second.option}</li>
+      <li class="option" data-optionid=${third.id}>${third.option}</li>
+      <li class="option" data-optionid=${fourth.id}>${fourth.option}</li>
       </ul>`;
 
     toggleActive();
@@ -167,7 +58,7 @@ function show(count) {
 
 function toggleActive() {
     let option = document.querySelectorAll("li.option");
-    let nextBtn = document.getElementById('btn-next');
+    let nextBtn = document.getElementById("btn-next");
     nextBtn.disabled = true;
     for (let i = 0; i < option.length; i++) {
         option[i].onclick = function () {
@@ -178,35 +69,112 @@ function toggleActive() {
             }
             option[i].classList.add("active");
             nextBtn.disabled = false;
-        }
+        };
     }
 }
 
 function next() {
-    // restart timer
     window.clearInterval(timerInt);
+    console.log(question_count, hidden_questions.length);
+    if (question_count == hidden_questions.length - 1) {
+        // alert("last_question 1");
+        let user_answer = document.querySelector("li.option.active");
+        let selected_option = user_answer
+            ? user_answer.getAttribute("data-optionid")
+            : null;
+        user_answer = user_answer ? user_answer.innerHTML : null;
 
-    if (question_count == questions.length - 1) {
-        location.href = "result.html";
-    }
-    else if (question_count == questions.length - 2) {
-        let nextBtn = document.getElementById('btn-next');
-        nextBtn.innerHTML = 'Submit'
+        let currentQuestion = hidden_questions[question_count];
+        let currentQuestionId = currentQuestion.id;
+
+        let options = currentQuestion.options;
+        let correct_answer = options.find((option) => {
+            return option.option == user_answer;
+        });
+
+        let question_score = 0;
+        if (user_answer && correct_answer.correct == 1) {
+            question_score = 1;
+            points += 1;
+            sessionStorage.setItem("points", points);
+            document.getElementById("score").innerHTML = points;
+            document.getElementById("total_score").value = points;
+        }
+        // question_count++;
+        // show(question_count);
+        let data = {
+            user_id,
+            question_id: currentQuestionId,
+            answer_id: selected_option,
+            is_correct: question_score ? 1 : 0,
+            question_score,
+        };
+
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
+        $.ajax({
+            url: "/add/Score",
+            type: "POST",
+            data: data,
+            success: function (response) {},
+        });
+        location.href = `/end-Quiz/${points}`;
+    } else if (question_count == hidden_questions.length - 2) {
+        // alert("last_question 2");
+        let nextBtn = document.getElementById("btn-next");
+        nextBtn.innerHTML = "Submit";
     }
 
-    let steps = document.querySelectorAll("#stepList span")
+    let steps = document.querySelectorAll("#stepList span");
     steps[question_count + 1].classList.add("current");
     steps[question_count].classList.add("done");
 
     let user_answer = document.querySelector("li.option.active");
-    user_answer = user_answer ? user_answer.innerHTML : null
+    let selected_option = user_answer
+        ? user_answer.getAttribute("data-optionid")
+        : null;
+    user_answer = user_answer ? user_answer.innerHTML : null;
 
-    if (user_answer && (user_answer.split('.')[1].trim() == questions[question_count].answer)) {
+    let currentQuestion = hidden_questions[question_count];
+    let currentQuestionId = currentQuestion.id;
+
+    let options = currentQuestion.options;
+    let correct_answer = options.find((option) => {
+        return option.option == user_answer;
+    });
+
+    let question_score = 0;
+    if (user_answer && correct_answer.correct == 1) {
+        question_score = 1;
         points += 1;
         sessionStorage.setItem("points", points);
-        document.getElementById('score').innerHTML = points;
+        document.getElementById("score").innerHTML = points;
+        document.getElementById("total_score").value = points;
     }
-
     question_count++;
     show(question_count);
+    let data = {
+        user_id,
+        question_id: currentQuestionId,
+        answer_id: selected_option,
+        is_correct: question_score ? 1 : 0,
+        question_score,
+    };
+
+    $.ajaxSetup({
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+    });
+
+    $.ajax({
+        url: "/add/Score",
+        type: "POST",
+        data: data,
+        success: function (response) {},
+    });
 }

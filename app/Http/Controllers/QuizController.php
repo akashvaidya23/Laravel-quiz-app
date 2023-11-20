@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\quiz;
+use App\Models\sector;
+use App\Models\Question;
+use App\Models\User_answer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class QuizController extends Controller
 {
@@ -63,7 +67,52 @@ class QuizController extends Controller
         //
     }
 
-    public function select_sector(){
-        return view('select_sector');
+    public function select_sector()
+    {
+        $sectors = sector::select('id','name')
+            ->get();
+        return view('select_sector',compact('sectors'));
+    }
+
+    public function details_form($id)
+    {
+        Session::put("sector_id",$id);
+        return view("details-form",compact("id"));
+    }
+
+    public function choose_game()
+    {
+        return view('choose-game');
+    }
+
+    public function start_quiz($id)
+    {
+        $questions = Question::with(['options'=> function ($query) {
+                // $query->select("id");
+            }])
+            ->select('questions.id','questions.name as question')
+            ->where("sectors_id",$id)
+            ->get();
+
+        return view("quiz",compact("questions"));
+    }
+
+    public function endQuiz($points)
+    {
+        $sector_id = Session::get("sector_id");
+        $user_name = Session::get("user_name");
+        $questions_count = Question::where("sectors_id",$sector_id)->count();
+        return view("result",compact("points","questions_count","user_name"));
+    }
+
+    public function addScore(Request $request)
+    {
+        User_answer::create([
+            "user_id" => $request->user_id,
+            "question_id" => $request->question_id,
+            "answer_id" => $request->answer_id,
+            "is_correct" => $request->is_correct,
+            "score" => $request->question_score,
+        ]);
     }
 }
